@@ -1,0 +1,9 @@
+ninjajucks:
+  build: .
+  restart: always
+  command: node_modules/.bin/nodemon -L -e js,json,html,njs ./bin/www
+  ports:
+    - "80:3000"
+  volumes:
+    - .:/usr/src/app
+    - /usr/src/app/node_modules

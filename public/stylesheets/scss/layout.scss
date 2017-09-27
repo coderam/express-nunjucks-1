@@ -1,0 +1,73 @@
+// Bulma
+// http://bulma.io/documentation/overview/customize/
+
+// 1. Import the initial variables
+@import "static/node_modules/bulma/sass/utilities/initial-variables";
+
+
+// 2. Set your own initial variables
+
+
+// http://bulma.io/documentation/components/navbar/
+//$primary: #2C4770;
+
+
+
+// 3. Set the derived variables
+
+
+
+
+// 4. Import the rest of Bulma
+@import "static/node_modules/bulma/bulma";
+
+
+
+
+
+/*
+section.hero.is-bold {
+
+	background-image: url("https://static.pexels.com/photos/79290/black-and-white-code-programming-tech-79290.jpeg");	
+	background-size:auto;
+	background-position: center;
+	
+}*/
+
+
+.container {
+	
+	margin: 0 auto;
+	margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    position: relative;
+    padding-left: 50px;
+    padding-right:50px;
+
+}
+
+
+.about-code-skills {
+
+	color: $light;
+	background-color: #0064a4;
+
+}
+
+.section.is-cta {
+    background: #fb841b;
+    color: #fff;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+
+ }
+
+
+
+h1.about_titles, h2.about_titles, h3.about_titles {
+
+	color:$light;
+	text-decoration-line:underline; 
+}
