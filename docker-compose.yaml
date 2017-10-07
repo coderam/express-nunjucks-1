@@ -1,7 +1,7 @@
 ninjajucks:
   build: .
   restart: always
-  command: node_modules/.bin/nodemon -L -e js,json,html,njs ./bin/www
+  command: node_modules/.bin/nodemon -L -e js,json,html,njs,css ./bin/www
   ports:
     - "80:3000"
   volumes:
