@@ -1,16 +1,32 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
+<!-- <div id="nicknamewrap">
+  <form id="nicknameform">
+   <input id="nickname" autocomplete="off">
+   <button>Send</button>
+  </form>
+</div> -->
+<div style="display: flex;flex-direction: column; height: 100%;">
+
+<div id="messagewrapper" style="overflow-y: auto;flex:1;">
   <ul id="messages"></ul>
 </div>
 <form id="chat">
   <input id="chatMessage" autocomplete="off">
   <button>Send</button>
 </form>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
   var socket = io();
+  // document.body.addEventListener('load', function() {
+  //   document.getElementById('messagewrapper').style.display = "none";
+  //
+  // });
+
+  
+
   var chat = document.getElementById('chat');
   chat.addEventListener('submit', function(e) {
     var message = document.getElementById('chatMessage');
@@ -21,7 +37,16 @@
   socket.on('chat message', function(msg) {
     var item = document.createElement('li');
     item.innerHTML = msg;
+    var atBottom = false;
+    var msgwrapscroll = document.getElementById('messagewrapper');
+    if ((msgwrapscroll.scrollHeight - msgwrapscroll.scrollTop - msgwrapscroll.clientHeight) < 50) {
+      atBottom = true;
+    }
     document.getElementById('messages').appendChild(item);
+    if (atBottom == true) {
+      msgwrapscroll.scrollTo(0, msgwrapscroll.scrollHeight);
+    }
   });
+
 </script>
 {% endblock %}
