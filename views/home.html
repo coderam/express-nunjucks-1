@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{# home.html #}
+
+{% block content %}
+
+
+<div class="home">
+  <div class="bg-1 section">
+    <div class="container ptb-5">
+      <div class="header flex align-center justify-space-between">
+        <div>
+          <h1 class="title">Team Lesser</h1>
+          <h2 class="subtitle">Problemlösare sedan 2016</h2>
+        </div>
+        <a href="/chat" class="fat-button">Lesserchat</a>
+      </div>
+    </div>
+  </div>
+  <div class="bg-5 section flexible">
+    <div class="container ptb-3 justify-center flex flex-column fullheight">
+      <h2 class="section-title">the cr3w</h2>
+      <div class="crew">
+        <div class="crew-member">
+          <img class="avatar" src="https://scontent-arn2-1.xx.fbcdn.net/v/t31.0-8/20934025_1267797413343613_1231005552098241340_o.jpg?oh=0c77ef777476a46675443ee5215680db&oe=5A818210" alt="">
+          <h3 class="crew-title">Marcus</h3>
+          <p>Han älskar korvmackor!</p>
+        </div>
+        <div class="crew-member">
+          <img class="avatar" src="https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/311917_2094476972086_342222554_n.jpg?oh=9fa412725673084434a474405537a7e8&oe=5A7B67A0" alt="">
+          <h3 class="crew-title">Johan</h3>
+          <p>Han älskar smör!</p>
+        </div>
+        <div class="crew-member">
+          <img class="avatar" src="https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/13938439_10208714244685859_6547840973091374606_n.jpg?oh=194bf0d5c5a27b71e1117980e7b2b0a3&oe=5A73F354" alt="">
+          <h3 class="crew-title">Adam</h3>
+          <p>Han älskar sitt Ubuntu!</p>
+        </div>
+        <div class="crew-member">
+          <img class="avatar" src="https://scontent-arn2-1.xx.fbcdn.net/v/t31.0-8/1052346_3239182195328_1748594094_o.jpg?oh=44d87c25401da7c7daee66a66529a95b&oe=5A3AF827" alt="">
+          <h3 class="crew-title">Sebbe</h3>
+          <p>Han älskar automatiska brevlådor!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bg-3 section">
+    <div class="container">
+      <p class="copyright text-center">Copyright &copy; {{ currentYear }} Team Lesser</p>
+    </div>
+  </div>
+</div
+
+{% endblock %}
