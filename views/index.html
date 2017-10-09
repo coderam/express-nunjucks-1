@@ -1,61 +1,58 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div id="nicknamewrap">
-  <form id="nicknameform">
-   <input id="nickname" autocomplete="off">
-   <button>Send</button>
-  </form>
-</div>
-<div id="wrap">
-
+<div style="height: 100%;display: flex;flex-direction: column;">
 <div id="messagewrapper" style="overflow-y: auto;flex:1;">
-  <ul id="messages"></ul>
+ <ul id="messages"></ul>
 </div>
 <form id="chat">
-  <input id="chatMessage" autocomplete="off">
-  <button>Send</button>
+ <input id="chatMessage" autocomplete="off" autofocus>
+ <button>Send</button>
 </form>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
-  var socket = io();
-  window.addEventListener('load', function() {
-    document.getElementById('wrap').style.display = 'none';
-
-  });
-
-  var thenickname;
-  var nickform = document.getElementById('nicknameform');
-  nickform.addEventListener('submit', function(e) {
-    var chosennickname = document.getElementById('nickname');
-    thenickname = chosennickname.value + ': ';
-    chosennickname.value = '';
-    document.getElementById('nicknamewrap').style.display = "none";
-    document.getElementById('wrap').style.display = "flex";
-    e.preventDefault();
-  });
-
+document.addEventListener('DOMContentLoaded', function () {
+  var messages = document.getElementById('messages');
+  var inputMessage = document.getElementById('chatMessage');
+  var chatPage = document.getElementById('messagewrapper');
   var chat = document.getElementById('chat');
+
+  var username;
+
+  while (!username) {
+    username = prompt('Please enter a nickname!');
+  }
+
+  var socket = io();
+
+  socket.emit('add user', username);
+
   chat.addEventListener('submit', function(e) {
-    var message = document.getElementById('chatMessage');
-    socket.emit('chat message', message.value);
-    message.value = '';
+    socket.emit('chat message', inputMessage.value);
+    inputMessage.value = '';
     e.preventDefault();
   });
-  socket.on('chat message', function(msg) {
+
+  // This is called when the server emits 'chat message', when it has received a message.
+  // Not called when the client emits 'chat message'.
+  socket.on('chat message', function(data) {
+    // Create a new item in the chat list
     var item = document.createElement('li');
-    item.innerHTML = thenickname + msg;
+    item.innerHTML = data.username + ": " + data.message;
+
+    // Determine if we should scroll to bottom after inserting the message.
     var atBottom = false;
-    var msgwrapscroll = document.getElementById('messagewrapper');
-    if ((msgwrapscroll.scrollHeight - msgwrapscroll.scrollTop - msgwrapscroll.clientHeight) < 50) {
+    if ((chatPage.scrollHeight - chatPage.scrollTop - chatPage.clientHeight) < 50) {
       atBottom = true;
     }
+
+    // Add the message item to the list and, maybe, scroll to bottom.
     document.getElementById('messages').appendChild(item);
     if (atBottom == true) {
-      msgwrapscroll.scrollTo(0, msgwrapscroll.scrollHeight);
+      chatPage.scrollTo(0, chatPage.scrollHeight);
     }
   });
-
+});
 </script>
 {% endblock %}
