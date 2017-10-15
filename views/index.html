@@ -1,37 +1,70 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div style="height: 100%;display: flex;flex-direction: column;">
-<div id="messagewrapper" style="overflow-y: auto;flex:1;">
- <ul id="messages"></ul>
+<div id="loginPage">
+ <input  id="usernameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
 </div>
-<form id="chat">
- <input id="chatMessage" autocomplete="off" autofocus>
- <button>Send</button>
-</form>
+
+<div id="chatPage" class="hidden chatPage">
+ <div id="messagewrapper">
+  <ul id="messages"></ul>
+ </div>
+ <form id="chat">
+  <input id="chatMessage" autocomplete="off">
+  <button>Send</button>
+ </form>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  //Login variables
+  var loginPage = document.getElementById('loginPage');
+  var usernameInput = document.getElementById('usernameInput');
+
+  var messageWrapper = document.getElementById('messagewrapper');
   var messages = document.getElementById('messages');
   var inputMessage = document.getElementById('chatMessage');
-  var chatPage = document.getElementById('messagewrapper');
+  var chatPage = document.getElementById('chatPage');
   var chat = document.getElementById('chat');
 
   var username;
-
-  while (!username) {
-    username = prompt('Please enter a nickname!');
-  }
-
+  usernameInput.addEventListener('keypress', function(e) {
+    if (e.keyCode === 13) {
+      if (usernameInput.value) {
+        username = usernameInput.value;
+        loginPage.classList.add('hidden');
+        chatPage.classList.remove('hidden');
+        inputMessage.focus();
+        socket.emit('add user', usernameInput.value);
+        socket.emit('user joined')
+      }
+    }
+  });
   var socket = io();
 
-  socket.emit('add user', username);
 
   chat.addEventListener('submit', function(e) {
     socket.emit('chat message', inputMessage.value);
     inputMessage.value = '';
     e.preventDefault();
+  });
+
+  //This is called when a user joins
+  socket.on('user joined', function (data) {
+    var joinedUser = document.createElement('li');
+    joinedUser.innerHTML = data.prefix + data.username + data.postfix;
+
+    // Determine if we should scroll to bottom after inserting the message.
+    var atBottom = false;
+    if ((messageWrapper.scrollHeight - messageWrapper.scrollTop - messageWrapper.clientHeight) < 50) {
+      atBottom = true;
+    }
+
+    // Add the message item to the list and, maybe, scroll to bottom.
+    document.getElementById('messages').appendChild(joinedUser);
+    if (atBottom == true) {
+      messageWrapper.scrollTo(0, messageWrapper.scrollHeight);
+    }
   });
 
   // This is called when the server emits 'chat message', when it has received a message.
@@ -43,14 +76,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Determine if we should scroll to bottom after inserting the message.
     var atBottom = false;
-    if ((chatPage.scrollHeight - chatPage.scrollTop - chatPage.clientHeight) < 50) {
+    if ((messageWrapper.scrollHeight - messageWrapper.scrollTop - messageWrapper.clientHeight) < 50) {
       atBottom = true;
     }
 
     // Add the message item to the list and, maybe, scroll to bottom.
     document.getElementById('messages').appendChild(item);
     if (atBottom == true) {
-      chatPage.scrollTo(0, chatPage.scrollHeight);
+      messageWrapper.scrollTo(0, messageWrapper.scrollHeight);
     }
   });
 });
