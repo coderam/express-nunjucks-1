@@ -24,7 +24,9 @@ var io = require('socket.io')(server);
 
 var numberOfUsers = 0;
 
-
+/**
+* Array for chat history
+*/
 var savedMessage = [];
 
 io.on('connection', socket => {
@@ -32,14 +34,18 @@ io.on('connection', socket => {
 
   socket.on('chat message', msg => {
     console.log('got a chat messaage! You said: ' + msg)
+    //Add chat message to chat history
     var theMessage = {username: socket.username, message: msg};
     savedMessage.push(theMessage);
+    //If chat history is over 49 messages long, delete the oldest entry
     if (savedMessage.length == 50) {
       savedMessage.shift();
     }
+
     io.emit('chat message', {
       username: socket.username,
-      message: msg
+      message: msg,
+      sId: socket.id
     });
   });
 

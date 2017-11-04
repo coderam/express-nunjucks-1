@@ -1,21 +1,39 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div id="loginPage" class="loginPage">
- <input  id="usernameInput" class="userNameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
-</div>
+<div id="chatWrapper" class="chatWrapper">
+ <input id="headBar" type="button" onclick="closeChat()"/>
+  <div id="contentWrapper">
 
-<div id="chatPage" class="hidden chatPage">
- <div id="messagewrapper">
-  <ul id="messages"></ul>
- </div>
- <form id="chat">
-  <input id="chatMessage" autocomplete="off">
-  <button>Send</button>
- </form>
+  <div id="loginPage" class="loginPage">
+   <input  id="usernameInput" class="userNameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
+  </div>
+
+  <div id="chatPage" class="hidden chatPage">
+   <div id="messagewrapper">
+    <ul id="messages"></ul>
+   </div>
+   <form id="chat">
+    <input id="chatMessage" autocomplete="off">
+    <button>Send</button>
+   </form>
+  </div>
+  </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
+function closeChat() {
+  if (document.getElementById('contentWrapper').classList.contains('hidden')) {
+    document.getElementById('contentWrapper').classList.remove('hidden');
+    document.getElementById('chatWrapper').classList.remove('close');
+    document.getElementById('chatWrapper').classList.add('chatWrapper');
+  }
+  else {
+    document.getElementById('contentWrapper').classList.add('hidden');
+    document.getElementById('chatWrapper').classList.remove('chatWrapper');
+    document.getElementById('chatWrapper').classList.add('close');
+  }
+}
 document.addEventListener('DOMContentLoaded', function () {
   //Login variables
   var loginPage = document.getElementById('loginPage');
@@ -26,8 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
   var inputMessage = document.getElementById('chatMessage');
   var chatPage = document.getElementById('chatPage');
   var chat = document.getElementById('chat');
+  var headBar = document.getElementById('headBar');
 
   var username;
+
   usernameInput.addEventListener('keypress', function(e) {
     if (e.keyCode === 13) {
       if (usernameInput.value) {
@@ -37,15 +57,14 @@ document.addEventListener('DOMContentLoaded', function () {
         chatPage.classList.remove('hidden');
         inputMessage.focus();
         socket.emit('add user', usernameInput.value);
-        socket.emit('user joined')
+        socket.emit('user joined');
       }
     }
   });
   var socket = io();
 
-
   chat.addEventListener('submit', function(e) {
-    socket.emit('chat message', inputMessage.value);
+    socket.emit('chat message', inputMessage.value, socket.id);
     inputMessage.value = '';
     e.preventDefault();
   });
@@ -73,6 +92,11 @@ document.addEventListener('DOMContentLoaded', function () {
   socket.on('chat message', function(data) {
     // Create a new item in the chat list
     var item = document.createElement('li');
+    if (socket.id == data.sId) {
+      item.classList.add('userWritten');
+    } else {
+      item.classList.add('othersWritten');
+    }
     item.innerHTML = data.username + ": " + data.message;
 
     // Determine if we should scroll to bottom after inserting the message.
