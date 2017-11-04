@@ -22,3 +22,26 @@ form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 
   overflow-y: auto;
   flex: 1;
 }
+
+.loginPage {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000
+}
+
+.userNameInput {
+  font-size: 2em;
+  width: 20em;
+  height: 2em;
+  background: #000;
+  color: white;
+  border: none;
+  border-bottom: solid blue 3px;
+  outline: none;
+}
+.userNameInput::placeholder {
+  color: white;
+}

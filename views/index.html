@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div id="loginPage">
- <input  id="usernameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
+<div id="loginPage" class="loginPage">
+ <input  id="usernameInput" class="userNameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
 </div>
 
 <div id="chatPage" class="hidden chatPage">
@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.keyCode === 13) {
       if (usernameInput.value) {
         username = usernameInput.value;
+        loginPage.classList.remove('loginPage');
         loginPage.classList.add('hidden');
         chatPage.classList.remove('hidden');
         inputMessage.focus();

@@ -24,11 +24,19 @@ var io = require('socket.io')(server);
 
 var numberOfUsers = 0;
 
+
+var savedMessage = [];
+
 io.on('connection', socket => {
   var addedUser = false;
 
   socket.on('chat message', msg => {
     console.log('got a chat messaage! You said: ' + msg)
+    var theMessage = {username: socket.username, message: msg};
+    savedMessage.push(theMessage);
+    if (savedMessage.length == 50) {
+      savedMessage.shift();
+    }
     io.emit('chat message', {
       username: socket.username,
       message: msg
@@ -42,16 +50,20 @@ io.on('connection', socket => {
     ++numberOfUsers;
     addedUser = true;
 
-
   });
 
   socket.on('user joined', function () {
-
+    for (var i = 0; i < savedMessage.length; i++) {
+     socket.emit('chat message', {
+       username: savedMessage[i].username,
+       message: savedMessage[i].message
+     });
+    }
     socket.broadcast.emit('user joined', {
       username: socket.username,
       prefix: "User ",
       postfix: " joined"
-  });
+    });
     // io.on('user joined', {
     //   username: socket.username,
     //   numberOfUsers: numberOfUsers
