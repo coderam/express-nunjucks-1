@@ -1,37 +1,44 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div id="chatWrapper" class="chatWrapper">
- <input id="headBar" type="button" onclick="closeChat()"/>
-  <div id="contentWrapper">
+  <div id="fnWrap" class="fnWrap">
+   <input id="headBar" type="button" onclick="closeChat()"/>
+   <div id="chatWrapper" class="chatWrapper">
+     <div id="contentWrapper">
 
-  <div id="loginPage" class="loginPage">
-   <input  id="usernameInput" class="userNameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
-  </div>
+     <div id="loginPage" class="loginPage">
+      <input  id="usernameInput" class="userNameInput" autocomplete="off" placeholder="Please select a handle..." autofocus>
+     </div>
 
-  <div id="chatPage" class="hidden chatPage">
-   <div id="messagewrapper">
-    <ul id="messages"></ul>
+     <div id="chatPage" class="hidden chatPage">
+      <div id="messagewrapper">
+       <ul id="messages"></ul>
+      </div>
+
+     </div>
+     </div>
    </div>
-   <form id="chat">
-    <input id="chatMessage" autocomplete="off">
-    <button>Send</button>
+   <form id="chat" class="hidden">
+    <input id="chatMessage" autocomplete="off" placeholder="Write something...">
    </form>
   </div>
-  </div>
-</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script>
 function closeChat() {
   if (document.getElementById('contentWrapper').classList.contains('hidden')) {
+    document.getElementById('fnWrap').classList.add('fnWrap');
+    document.getElementById('fnWrap').classList.remove('close');
     document.getElementById('contentWrapper').classList.remove('hidden');
-    document.getElementById('chatWrapper').classList.remove('close');
+    document.getElementById('chatWrapper').classList.remove('hidden');
     document.getElementById('chatWrapper').classList.add('chatWrapper');
   }
   else {
+    document.getElementById('fnWrap').classList.remove('fnWrap');
+    document.getElementById('fnWrap').classList.add('close');
     document.getElementById('contentWrapper').classList.add('hidden');
     document.getElementById('chatWrapper').classList.remove('chatWrapper');
-    document.getElementById('chatWrapper').classList.add('close');
+    document.getElementById('chatWrapper').classList.add('hidden');
   }
 }
 document.addEventListener('DOMContentLoaded', function () {
@@ -56,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loginPage.classList.remove('loginPage');
         loginPage.classList.add('hidden');
         chatPage.classList.remove('hidden');
+        chat.classList.remove('hidden');
         inputMessage.focus();
         socket.emit('add user', usernameInput.value);
         socket.emit('user joined');
@@ -77,14 +85,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Determine if we should scroll to bottom after inserting the message.
     var atBottom = false;
-    if ((messageWrapper.scrollHeight - messageWrapper.scrollTop - messageWrapper.clientHeight) < 50) {
+    if ((chatWrap.scrollHeight - chatWrap.scrollTop - chatWrap.clientHeight) < 50) {
       atBottom = true;
     }
 
     // Add the message item to the list and, maybe, scroll to bottom.
     document.getElementById('messages').appendChild(joinedUser);
     if (atBottom == true) {
-      window.scrollTo(0, messageWrapper.scrollHeight);
+      chatWrap.scrollTo(0, chatWrap.scrollHeight);
     }
   });
 
@@ -102,14 +110,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Determine if we should scroll to bottom after inserting the message.
     var atBottom = false;
-    if ((messageWrapper.scrollHeight - messageWrapper.scrollTop - messageWrapper.clientHeight) < 50) {
+    if ((chatWrap.scrollHeight - chatWrap.scrollTop - chatWrap.clientHeight) < 50) {
       atBottom = true;
     }
 
     // Add the message item to the list and, maybe, scroll to bottom.
     document.getElementById('messages').appendChild(item);
     if (atBottom == true) {
-      window.scrollTo(0, messageWrapper.scrollHeight);
+      chatWrap.scrollTo(0, chatWrap.scrollHeight);
     }
   });
 });
