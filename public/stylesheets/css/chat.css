@@ -1,0 +1,124 @@
+
+form {
+  background: #fff;
+  padding: 5px;
+  width: 260px;
+  flex-shrink: 0;
+  border: solid #a3a3a3 1px;
+}
+form input {
+  width: 90%;
+  padding: 5%;
+  background: #fff;
+  color: black;
+  border: none;
+  outline: none;
+}
+form input::placeholder {
+  color: #4b4f56;
+}
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages li { padding: 5px 10px; }
+.fnWrap{
+  height: 330px;
+  width: 260px;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+.chatWrapper {
+  height: 330px;
+  width: 260px;
+  border-left: solid #a3a3a3  1px;
+  border-right: solid #a3a3a3  1px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#headBar {
+  width: 100%;
+  height: 2em;
+  flex-shrink: 0;
+  background-color: rgb(19, 207, 19);
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+#headBar:hover{
+  cursor: pointer;
+}
+#contentWrapper {
+  flex: 1;
+}
+.chatPage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.hidden {
+  display: none;
+}
+.close {
+  height: 2em;
+  position: fixed;
+  bottom: 0;
+  width: 260px;
+}
+.webPage {
+  height: 200%;
+  width: 100%;
+}
+#messagewrapper {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.loginPage {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  margin: 0;
+}
+
+.userNameInput {
+  font-size: 1em;
+  width: 128px;
+  height: 128px;
+  background: #fff;
+  color: black;
+  border: none;
+  outline: none;
+}
+.userNameInput::placeholder {
+  color: #a3a3a3;
+}
+
+.userWritten {
+  float: right;
+  width: 75%;
+  text-align: left;
+  background: rgb(19, 207, 19);
+  color: #fff;
+  padding: 10%;
+  margin: 1px;
+  border-radius: 5px;
+}
+
+.othersWritten {
+  float: left;
+  width: 75%;
+  background: #bababa;
+  color: #000;
+  text-align: left;
+  padding: 10%;
+  margin: 1px;
+  border-radius: 5px;
+}

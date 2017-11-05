@@ -22,11 +22,69 @@ app.set('port', port);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
+var numberOfUsers = 0;
+
+/**
+* Array for chat history
+*/
+var savedMessage = [];
+
 io.on('connection', socket => {
+  var addedUser = false;
+
   socket.on('chat message', msg => {
     console.log('got a chat messaage! You said: ' + msg)
-    io.emit('chat message', msg)
-  })
+    //Add chat message to chat history
+    var usernameString = "";
+    usernameString = socket.username;
+    var theMessage = {username: usernameString, message: msg};
+    savedMessage.push(theMessage);
+    //If chat history is over 49 messages long, delete the oldest entry
+    if (savedMessage.length == 50) {
+      savedMessage.shift();
+    }
+
+    io.emit('chat message', {
+      username: socket.username,
+      message: msg,
+      sId: socket.id
+    });
+  });
+
+  socket.on('add user', username => {
+    if (addedUser) return;
+
+    socket.username = username;
+    ++numberOfUsers;
+    addedUser = true;
+
+  });
+
+  socket.on('user joined', function () {
+    for (var i = 0; i < savedMessage.length; i++) {
+     socket.emit('chat message', {
+       username: savedMessage[i].username,
+       message: savedMessage[i].message
+     });
+    }
+    socket.broadcast.emit('user joined', {
+      username: socket.username,
+      prefix: "User ",
+      postfix: " joined"
+    });
+
+  });
+
+  // socket.on('disconnect', function () {
+  //   if (addedUser) {
+  //     --numberOfUsers;
+  //
+  //     io.emit('user left', {
+  //       username: socket.username,
+  //       numberOfUsers: numberOfUsers
+  //     });
+  //   }
+  // });
 });
 
 /**
