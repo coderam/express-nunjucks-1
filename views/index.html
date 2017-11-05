@@ -36,6 +36,7 @@ function closeChat() {
 }
 document.addEventListener('DOMContentLoaded', function () {
   //Login variables
+  var chatWrap = document.getElementById('chatWrapper');
   var loginPage = document.getElementById('loginPage');
   var usernameInput = document.getElementById('usernameInput');
 
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add the message item to the list and, maybe, scroll to bottom.
     document.getElementById('messages').appendChild(joinedUser);
     if (atBottom == true) {
-      messageWrapper.scrollTo(0, messageWrapper.scrollHeight);
+      window.scrollTo(0, messageWrapper.scrollHeight);
     }
   });
 
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add the message item to the list and, maybe, scroll to bottom.
     document.getElementById('messages').appendChild(item);
     if (atBottom == true) {
-      messageWrapper.scrollTo(0, messageWrapper.scrollHeight);
+      window.scrollTo(0, messageWrapper.scrollHeight);
     }
   });
 });
