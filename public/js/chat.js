@@ -1,79 +1,85 @@
 let socket = io()
-class Message extends React.Component {
-  render() {
-    return (<div style={{textAlign: this.props.isCurrentUser ? "right" : "left"}}>
-      {
-      this.props.user ? this.props.user + ":" + this.props.message  
-      : this.props.message
-      }
-    </div>)
-  }
+function Message(props) {
+  return (<div className={props.isCurrentUser ? "current-user" : "other-user"}><div>
+    {!props.isCurrentUser && props.user} {props.message}
+  </div></div>)
 }
 class ChatInput extends React.Component {
   state = {
     theMessage: ""
   }
   render() {
-    return <div>
+    return <div className={this.props.class}>
       <input type="text" 
         onKeyDown={this.checkForEnter} 
         value={this.state.theMessage} 
         onChange={this.handleChange} 
         placeholder="Type here..."
       />
-      <button onClick={this.submitMessage}>Send</button>
+      {this.props.button && <button onClick={this.submitMessage}>Send</button>}
     </div>
   }
+  
   handleChange = event => this.setState({theMessage: event.target.value})
   submitMessage = () => {
-    this.props.onSubmit({
-      message: this.state.theMessage,
-      messageType: this.props.inputType 
-    })
+    this.props.onSubmit(this.state.theMessage)
     this.setState({theMessage : ""})
   }
-  checkForEnter = keyEvent => { if (keyEvent.key == 'Enter') this.submitMessage() }
+  checkForEnter = keyEvent => keyEvent.key == 'Enter' && this.submitMessage()
+}
+function Login(props) {
+  return <div className={props.class}>
+    <ChatInput onSubmit={props.onSubmit} button={false}/>
+  </div>  
 }
 class Chat extends React.Component {
   state = {
-    messages: [{
-      user: 'Foo',
-      message: 'bar'
-    },
-    {
-      user: 'Bar',
-      message: 'foo'
-    },
-    {
-      user: 'Batman',
-      message: 'Super sad backstory'
-    }],
-    currentUser: ""
+    messages: [],
+    currentUser: "",
+    showChat: true,
+    showLogin: true,
+    showMessages: false
   }
+  chatContainer = null
   render () {
-    return <div>
-      <ChatInput inputType="user joined" onSubmit={this.submitMessage}/>
-      {this.state.messages.map(message => 
-      <Message 
-        user={message.user}
-        message={message.message}
-        isCurrentUser={message.user == this.state.currentUser}
+    return <div className={this.state.showChat ? 'fnWrap' : 'close'}>
+      <div className='close-bar' onClick={this.collapseChat}/>
+      <Login 
+        class={this.state.showLogin ? 'loginPage' : 'hidden'}
+        onSubmit={this.login}
       />
-      )}
-      <ChatInput inputType="chat message" onSubmit={this.submitMessage}/>
+      <div className={this.state.showMessages ? 'chat-page' : 'hidden'} ref={ e => this.chatContainer = e}>
+        <div className="messages">
+          {this.state.messages.map(message => 
+          <Message
+            key={message.id}
+            isCurrentUser={this.state.currentUser==message.user}
+            user={message.user ? message.user + ": " : ''}
+            message={message.message}
+          />
+          )}
+        </div>
+      </div>
+      <ChatInput 
+          class={this.state.showMessages ? 'chat-message-input' : 'hidden'} 
+          inputType="chat message" 
+          onSubmit={this.submitMessage}
+          button={true}
+      />
     </div>
   }
   componentDidMount() {
     socket.on('chat message', data => {
       this.setState({
           messages : this.state.messages.concat({
+            id: data.id,
             user: data.username,
             message: data.message
         })
       })
     })
     socket.on('user joined', data => {
-      console.log("got here")
+  
       this.setState({
         messages : this.state.messages.concat({
           user: null,
@@ -82,15 +88,17 @@ class Chat extends React.Component {
       })
     })
   }
-  submitMessage = submittedMessage => {
-    console.log(submittedMessage.message)
-    if (submittedMessage.message) {
-      submittedMessage.messageType=='user joined' ? this.setState({ currentUser: submittedMessage.message }, () => {
-        socket.emit(submittedMessage.messageType, submittedMessage.message)
-        }) 
-      : socket.emit(submittedMessage.messageType, submittedMessage.message)
+  login = userName => this.setState({currentUser: userName, showLogin: false, showMessages: true}, () => socket.emit('user joined', userName))
+  submitMessage = submittedMessage => submittedMessage && socket.emit('chat message', submittedMessage)
+  scrollToBottom = container => container.scrollTo(0, container.clientHeight)
+  componentDidUpdate () {
+    let chatWrap = this.chatContainer 
+    console.log("Clientheight: " + chatWrap.clientHeight + " scrollTop: " + chatWrap.scrollTop + "scrollheight: " + chatWrap.scrollHeight)
+    if ((chatWrap.scrollHeight - chatWrap.scrollTop - chatWrap.clientHeight) < 50) {
+      chatWrap.scrollTo(0, 10000)
     }
   }
+  collapseChat = () => this.setState({showChat: this.state.showChat ? false : true})
 }
 
 ReactDOM.render(
