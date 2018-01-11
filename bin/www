@@ -21,9 +21,12 @@ app.set('port', port);
 
 var server = http.createServer(app);
 var io = require('socket.io')(server);
-
 var numberOfUsers = 0;
-
+let fs = require('fs')
+let addressus = './public/images'
+let imageArray = fs.readdirSync(addressus)
+let nameArray = imageArray.map(fileName => fileName.substring(0, fileName.indexOf('.')))
+console.log(nameArray)
 /**
 * Array for chat history
 */
@@ -35,10 +38,12 @@ io.on('connection', socket => {
     //Add chat message to chat history
     var usernameString = "";
     usernameString = socket.username;
+    socket.userImageUrl = imageArray.find(imageUrl => imageUrl.substring(0, imageUrl.indexOf('.')) == socket.username)
     var theMessage = {
       id: socket.id + Date.now(),
       username: usernameString, 
-      message: msg
+      message: msg,
+      profilePicUrl: socket.userImageUrl
     }
     console.log(theMessage)
     savedMessage.push(theMessage);
@@ -46,21 +51,20 @@ io.on('connection', socket => {
     if (savedMessage.length == 50) {
       savedMessage.shift();
     }
-
+    
     io.emit('chat message', {
       id: socket.id + Date.now(),
       username: socket.username,
       message: msg,
+      profilePicUrl: socket.userImageUrl
     });
   });
 
   socket.on('add user', username => {
     if (addedUser) return;
-
     socket.username = username;
     ++numberOfUsers;
     addedUser = true;
-
   });
 
   socket.on('user joined', username => {
